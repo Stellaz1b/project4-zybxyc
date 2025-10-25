@@ -107,23 +107,81 @@ void Player::add_ship(Ship ship) {
 }
 
 void Player::attack(Player &opponent, Position pos) {
-    
+    int row = pos.get_row();
+    int col = pos.get_col();
+    if(opponent.grid[row][col] == HIT_LETTER || opponent.grid[row][col] == MISS_LETTER){
+        guess_grid[row][col] = MISS_LETTER;
+        opponent.grid[row][col] = MISS_LETTER;
+        cout << name << " " << pos << " miss" << endl;
+        return;
+    }
+    bool hit_ship = false;
+    for(int i = 0; i < opponent.num_ships; i++){
+        if(opponent.ships[i].has_position(pos)){
+            hit_ship = true;
+            guess_grid[row][col] = HIT_LETTER;
+            opponent.grid[row][col] = HIT_LETTER;
+            cout << name << " " << pos << " hit" << endl;
+            opponent.ships[i].hit();
+            if(opponent.ships[i].has_sunk()){
+                opponent.remaining_ships -= 1;
+                opponent.announce_ship_sunk(opponent.ships[i].get_size());
+            }
+            break;
+        }
+    }
+    if(!hit_ship){
+        guess_grid[row][col] = MISS_LETTER;
+        opponent.grid[row][col] = MISS_LETTER;
+        cout << name << " " << pos << " miss" << endl;
+    }
     return;
 }
 
 void Player::announce_ship_sunk(int size) {
-    // TODO: write implementation here.
+    string ship_type;
+    if(size == 2){
+        ship_type = "Destroyer";
+    }
+    else if(size == 3){
+        ship_type = "Submarine";
+    }
+    else if(size == 4){
+        ship_type = "Battleship";
+    }
+    else{
+        ship_type = "Carrier";
+    }
+    cout << "Congratulations " << name << "! You sunk a " << ship_type << endl;
     return;
 }
 
 bool Player::load_grid_file(string filename) {
-    // TODO: write implementation here.
-    return false;
+    ifstream input;
+    input.open(filename);
+    if(!input.is_open()){
+        return false;
+    }
+    while(input.is_open() && num_ships < MAX_NUM_SHIPS){
+        Position new_start;
+        Position new_end;
+        input >> new_start >> new_end;
+        if(input.good()){
+            Ship new_ship(new_start, new_end);
+            add_ship(new_ship);
+        }
+    }
+    input.close();
+    return true;
 }
 
 bool Player::destroyed() {
-    // TODO: write implementation here.
-    return false;
+    if(remaining_ships == 0){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 // Your code goes above this line.

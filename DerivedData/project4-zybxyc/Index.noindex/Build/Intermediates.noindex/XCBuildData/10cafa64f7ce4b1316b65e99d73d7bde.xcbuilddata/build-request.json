@@ -1,0 +1,48 @@
+{
+  "buildCommand" : {
+    "command" : "prepareForIndexing",
+    "enableIndexBuildArena" : true,
+    "targets" : null
+  },
+  "configuredTargets" : [
+    {
+      "guid" : "25a6b938315e7265d5ba30eaba8ee626a94d92a1f3d5427c584f425d641f21d6"
+    }
+  ],
+  "containerPath" : "/Users/zzz/Desktop/EECS183/project4-zybxyc/project4-zybxyc.xcodeproj",
+  "continueBuildingAfterErrors" : true,
+  "dependencyScope" : "workspace",
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "indexbuild",
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/zzz/Desktop/EECS183/project4-zybxyc/DerivedData/project4-zybxyc/Index.noindex/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/zzz/Desktop/EECS183/project4-zybxyc/DerivedData/project4-zybxyc/Index.noindex/Build/Products",
+      "derivedDataPath" : "/Users/zzz/Desktop/EECS183/project4-zybxyc/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/zzz/Desktop/EECS183/project4-zybxyc/DerivedData/project4-zybxyc/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/zzz/Desktop/EECS183/project4-zybxyc/DerivedData/project4-zybxyc/Index.noindex/PrecompiledHeaders",
+      "indexRegularBuildIntermediatesPath" : "/Users/zzz/Desktop/EECS183/project4-zybxyc/DerivedData/project4-zybxyc/Build/Intermediates.noindex",
+      "indexRegularBuildProductsPath" : "/Users/zzz/Desktop/EECS183/project4-zybxyc/DerivedData/project4-zybxyc/Build/Products",
+      "pchPath" : "/Users/zzz/Desktop/EECS183/project4-zybxyc/DerivedData/project4-zybxyc/Index.noindex/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ENABLE_PREVIEWS" : "NO",
+          "ENABLE_XOJIT_PREVIEWS" : "NO",
+          "ONLY_ACTIVE_ARCH" : "YES"
+        }
+      }
+    }
+  },
+  "qos" : "utility",
+  "schemeCommand" : "launch",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}
