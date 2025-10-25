@@ -18,17 +18,17 @@
 
 
 Game::Game() {
-    Player p1;
-    Player p2;
 }
 
 Game::Game(Player player1, string grid1, Player player2, string grid2) {
-    Player p1(player1.get_name());
-    Player p2(player2.get_name());
+    p1 = player1;
+    p2 = player2;
     bool ok1 = false;
+    
     if(!grid1.empty()){
         ok1 = p1.load_grid_file(grid1);
     }
+    
     if(!ok1) {
         cout << "Generating random grid for " << p1.get_name() << endl;
         generate_random_grid(p1);
@@ -86,10 +86,8 @@ void Game::start(char difficulty, int max_num_rounds) {
     
     while(numRound < max_num_rounds && !p1.destroyed() && !p2.destroyed()){
         move = get_move(p1.get_name());
-        cout << move << endl;
         while(!check_valid_move(move)){
             move = get_move(p1.get_name());
-            cout << move << endl;
         }
         Position pos(move.at(0), move.at(1));
         p1.attack(p2, pos);
@@ -104,6 +102,7 @@ void Game::start(char difficulty, int max_num_rounds) {
             cout << endl;
             
             numRound ++;
+            break;
         }
         else{
             opponent_make_move(difficulty);
@@ -121,16 +120,14 @@ void Game::start(char difficulty, int max_num_rounds) {
     
     if(p1.destroyed()) {
         winnerName = p2.get_name();
-        cout << "Game over, winner is " << winnerName << " in " << numRound << " rounds" << endl;
     }
     else if(p2.destroyed()){
         winnerName = p1.get_name();
-        cout << "Game over, winner is " << winnerName << " in " << numRound << " rounds" << endl;
     }
     else{
         winnerName = "no one";
-        cout << "Game over, winner is " << winnerName << " in " << numRound << " rounds" << endl;
     }
+    cout << "Game over, winner is " << winnerName << " in " << numRound << " rounds" << endl;
 }
 
 // Your code goes above this line.
