@@ -125,7 +125,7 @@ void Player::attack(Player &opponent, Position pos) {
             opponent.ships[i].hit();
             if(opponent.ships[i].has_sunk()){
                 opponent.remaining_ships -= 1;
-                opponent.announce_ship_sunk(opponent.ships[i].get_size());
+                announce_ship_sunk(opponent.ships[i].get_size());
             }
             break;
         }
@@ -162,7 +162,7 @@ bool Player::load_grid_file(string filename) {
     if(!input.is_open()){
         return false;
     }
-    while(input.is_open() && num_ships < MAX_NUM_SHIPS){
+    while(input.good() && num_ships < MAX_NUM_SHIPS){
         Position new_start;
         Position new_end;
         input >> new_start >> new_end;
