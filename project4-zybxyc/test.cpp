@@ -13,6 +13,7 @@
 #include <string>
 #include <fstream>
 #include <cstdlib>
+#include <sstream> 
 
 #include "Position.h"
 #include "Ship.h"
