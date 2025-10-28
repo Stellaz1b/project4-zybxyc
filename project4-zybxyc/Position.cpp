@@ -65,7 +65,7 @@ void Position::write(ostream &os) {
 }
 
 int Position::check_range(int val) {
-    if (val >= 0 && val < MAX_GRID_SIZE){
+    if (val >= 0 && val < MAX_GRID_SIZE) {
         return val;
     }
     else {

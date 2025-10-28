@@ -29,10 +29,10 @@ Ship::Ship(Position start_in, Position end_in) {
     start = start_in;
     end = end_in;
     num_hits = 0;
-    if(is_horizontal()){
+    if (is_horizontal()) {
         size = abs(end.get_col() - start.get_col()) + 1;
     }
-    else{
+    else {
         size = abs(end.get_row() - start.get_row()) + 1;
     }
 }
@@ -50,56 +50,56 @@ int Ship::get_size() {
 }
 
 bool Ship::is_horizontal() {
-    if(start.get_row() == end.get_row()){
+    if (start.get_row() == end.get_row()) {
         return true;
     }
-    else{
+    else {
         return false;
     }
 }
 
 bool Ship::has_position(Position pos) {
-    if(is_horizontal()){
-        if(pos.get_row() != start.get_row()){
+    if (is_horizontal()) {
+        if (pos.get_row() != start.get_row()) {
             return false;
         }
-        else{
-            if(start.get_col() < end.get_col()){
-                if(pos.get_col() >= start.get_col() && pos.get_col() <= end.get_col()){
+        else {
+            if (start.get_col() < end.get_col()) {
+                if (pos.get_col() >= start.get_col() && pos.get_col() <= end.get_col()) {
                     return true;
                 }
-                else{
+                else {
                     return false;
                 }
             }
-            else{
-                if(pos.get_col() >= end.get_col() && pos.get_col() <= start.get_col()){
+            else {
+                if (pos.get_col() >= end.get_col() && pos.get_col() <= start.get_col()) {
                     return true;
                 }
-                else{
+                else {
                     return false;
                 }
             }
         }
     }
-    else{
-        if(pos.get_col() != start.get_col()){
+    else {
+        if (pos.get_col() != start.get_col()) {
             return false;
         }
-        else{
-            if(start.get_row() < end.get_row()){
-                if(pos.get_row() >= start.get_row() && pos.get_row() <= end.get_row()){
+        else {
+            if (start.get_row() < end.get_row()) {
+                if (pos.get_row() >= start.get_row() && pos.get_row() <= end.get_row()) {
                     return true;
                 }
-                else{
+                else {
                     return false;
                 }
             }
-            else{
-                if(pos.get_row() >= end.get_row() && pos.get_row() <= start.get_row()){
+            else {
+                if (pos.get_row() >= end.get_row() && pos.get_row() <= start.get_row()) {
                     return true;
                 }
-                else{
+                else {
                     return false;
                 }
             }
@@ -108,17 +108,17 @@ bool Ship::has_position(Position pos) {
 }
 
 void Ship::hit() {
-    if(num_hits < size){
+    if (num_hits < size) {
         num_hits++;
     }
     return;
 }
 
 bool Ship::has_sunk() {
-    if(num_hits == size){
+    if (num_hits == size) {
         return true;
     }
-    else{
+    else {
         return false;
     }
 }
