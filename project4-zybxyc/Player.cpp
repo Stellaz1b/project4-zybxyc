@@ -32,6 +32,7 @@ Player::Player(string name_val) {
 }
 
 void Player::init_grid() {
+    //initialize both grid and guess_grid
     for (int i = 0; i < MAX_GRID_SIZE; i++) {
         for (int j = 0; j < MAX_GRID_SIZE; j++) {
             grid[i][j] = EMPTY_LETTER;
@@ -62,19 +63,23 @@ char Player::get_guess_grid_at(int row, int col) {
 }
 
 void Player::add_ship(Ship ship) {
+    //exceeds the maximum number of ships
     if (num_ships >= MAX_NUM_SHIPS) {
         return;
     }
+    //add ship to the ships and update current number
     ships[num_ships] = ship;
     num_ships += 1;
     remaining_ships += 1;
     
     Position ship_start = ship.get_start();
     Position ship_end = ship.get_end();
+    //horizontal ship
     if (ship.is_horizontal()) {
         int row = ship_start.get_row();
         int from_col = 0;
         int to_col = 0;
+        //make it insensitive to the size of start and end values
         if (ship_start.get_col() < ship_end.get_col()) {
             from_col = ship_start.get_col();
             to_col = ship_end.get_col();
@@ -87,6 +92,7 @@ void Player::add_ship(Ship ship) {
             grid[row][col] = SHIP_LETTER;
         }
     }
+    //vertical ship
     else {
         int col = ship_start.get_col();
         int from_row = 0;
@@ -109,6 +115,7 @@ void Player::add_ship(Ship ship) {
 void Player::attack(Player &opponent, Position pos) {
     int row = pos.get_row();
     int col = pos.get_col();
+    //when it hits the pos which has hit or miss previously
     if (opponent.grid[row][col] == HIT_LETTER || opponent.grid[row][col] == MISS_LETTER) {
         guess_grid[row][col] = MISS_LETTER;
         opponent.grid[row][col] = MISS_LETTER;
@@ -117,12 +124,14 @@ void Player::attack(Player &opponent, Position pos) {
     }
     bool hit_ship = false;
     for (int i = 0; i < opponent.num_ships; i++) {
+        //when it hits the ship
         if (opponent.ships[i].has_position(pos)) {
             hit_ship = true;
             guess_grid[row][col] = HIT_LETTER;
             opponent.grid[row][col] = HIT_LETTER;
             cout << name << " " << pos << " hit" << endl;
             opponent.ships[i].hit();
+            //check the ships is sunk or not
             if (opponent.ships[i].has_sunk()) {
                 opponent.remaining_ships -= 1;
                 announce_ship_sunk(opponent.ships[i].get_size());
@@ -130,6 +139,7 @@ void Player::attack(Player &opponent, Position pos) {
             break;
         }
     }
+    //when it doesn't hit the ship
     if (!hit_ship) {
         guess_grid[row][col] = MISS_LETTER;
         opponent.grid[row][col] = MISS_LETTER;
