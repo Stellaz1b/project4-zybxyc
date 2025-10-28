@@ -20,25 +20,25 @@
 Game::Game() {
 }
 
-Game::Game(Player player1, string grid1, Player player2, string grid2) {
+Game::Game (Player player1, string grid1, Player player2, string grid2) {
     p1 = player1;
     p2 = player2;
     bool ok1 = false;
     
-    if(!grid1.empty()){
+    if (!grid1.empty()) {
         ok1 = p1.load_grid_file(grid1);
     }
     
-    if(!ok1) {
+    if (!ok1) {
         cout << "Generating random grid for " << p1.get_name() << endl;
         generate_random_grid(p1);
     }
     
     bool ok2 = false;
-    if(!grid2.empty()){
+    if (!grid2.empty()) {
         ok2 = p2.load_grid_file(grid2);
     }
-    if(!ok2){
+    if (!ok2) {
         cout << "Generating random grid for " << p2.get_name() << endl;
         generate_random_grid(p2);
     }
@@ -62,17 +62,17 @@ string Game::get_move(string player_name) {
 bool Game::check_valid_move(string move) {
     char row;
     char col;
-    if(move.size() != 2){
+    if (move.size() != 2) {
         cout << p1.get_name() << " you entered an invalid input" << endl;
         return false;
     }
-    else{
+    else {
         row = move.at(0);
         col = move.at(1);
         if(('1' <= row && row <= '8') && ('A' <= toupper(col) && toupper(col) <= 'H')){
             return true;
         }
-        else{
+        else {
             cout << p1.get_name() << " you entered an invalid position" << endl;
             return false;
         }
@@ -84,15 +84,15 @@ void Game::start(char difficulty, int max_num_rounds) {
     string move;
     string winnerName = "";
     
-    while(numRound < max_num_rounds && !p1.destroyed() && !p2.destroyed()){
+    while (numRound < max_num_rounds && !p1.destroyed() && !p2.destroyed()) {
         move = get_move(p1.get_name());
-        while(!check_valid_move(move)){
+        while (!check_valid_move(move)) {
             move = get_move(p1.get_name());
         }
         Position pos(move.at(0), move.at(1));
         p1.attack(p2, pos);
         //end if p2 destroyed, not make opponent move and print grid
-        if(p2.destroyed()){
+        if (p2.destroyed()) {
             cout << "Your grid" << endl;
             p1.print_grid();
             cout << endl;
@@ -104,7 +104,7 @@ void Game::start(char difficulty, int max_num_rounds) {
             numRound ++;
             break;
         }
-        else{
+        else {
             opponent_make_move(difficulty);
             //print grid
             cout << "Your grid" << endl;
@@ -118,13 +118,13 @@ void Game::start(char difficulty, int max_num_rounds) {
         }
     }
     
-    if(p1.destroyed()) {
+    if (p1.destroyed()) {
         winnerName = p2.get_name();
     }
-    else if(p2.destroyed()){
+    else if (p2.destroyed()) {
         winnerName = p1.get_name();
     }
-    else{
+    else {
         winnerName = "no one";
     }
     cout << "Game over, winner is " << winnerName << " in " << numRound << " rounds" << endl;
