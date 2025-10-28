@@ -24,7 +24,7 @@ Game::Game (Player player1, string grid1, Player player2, string grid2) {
     p1 = player1;
     p2 = player2;
     bool ok1 = false;
-    
+    //read if grid1 is non-empty
     if (!grid1.empty()) {
         ok1 = p1.load_grid_file(grid1);
     }
@@ -35,6 +35,7 @@ Game::Game (Player player1, string grid1, Player player2, string grid2) {
     }
     
     bool ok2 = false;
+    //read if grid2 is non-empty
     if (!grid2.empty()) {
         ok2 = p2.load_grid_file(grid2);
     }
@@ -83,7 +84,7 @@ void Game::start(char difficulty, int max_num_rounds) {
     int numRound = 0;
     string move;
     string winnerName = "";
-    
+    //no one has all ship sunk nor max round has been reached
     while (numRound < max_num_rounds && !p1.destroyed() && !p2.destroyed()) {
         move = get_move(p1.get_name());
         while (!check_valid_move(move)) {

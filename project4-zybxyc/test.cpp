@@ -13,7 +13,7 @@
 #include <string>
 #include <fstream>
 #include <cstdlib>
-#include <sstream> 
+#include <sstream>
 
 #include "Position.h"
 #include "Ship.h"
@@ -34,6 +34,7 @@ void startTests() {
     test_position();
     test_ship();
     test_player();
+    test_game();
     
     return;
 }
@@ -42,32 +43,32 @@ void test_position() {
     cout << "==== POSITION TESTS ====\n";
 
     // POSITION_DEFAULT_CONSTRUCTOR
-    Position pos_p0;
+    Position p0;
     cout << "POSITION_DEFAULT_CONSTRUCTOR\n";
     cout << "  Expected row=0 col=0; write=(1,A)\n";
-    cout << "  Actual   row=" << pos_p0.get_row() << " col=" << pos_p0.get_col()
-         << "; write=" << pos_p0 << "\n";
+    cout << "  Actual   row=" << p0.get_row() << " col=" << p0.get_col()
+         << "; write=" << p0 << "\n";
 
     // POSITION_NON_DEFAULT_CONSTRUCTOR_1 (int,int)
-    Position pos_p1(3, 4);
-    Position pos_bad1(99, 99);
+    Position p1(3, 4);       // -> (4,E)
+    Position p_bad(99, 99);  // 应被夹回有效范围（通常 0,0）
     cout << "POSITION_NON_DEFAULT_CONSTRUCTOR_1\n";
     cout << "  p(3,4) Expected (row=3,col=4; write=(4,E))\n";
-    cout << "  p(3,4) Actual   (row=" << pos_p1.get_row() << ",col=" << pos_p1.get_col()
-         << "; write=" << pos_p1 << ")\n";
-    cout << "  p(99,99) range-fix Expected row=0 col=0\n";
-    cout << "  p(99,99) Actual     row=" << pos_bad1.get_row()
-         << " col=" << pos_bad1.get_col() << "\n";
+    cout << "  p(3,4) Actual   (row=" << p1.get_row() << ",col=" << p1.get_col()
+         << "; write=" << p1 << ")\n";
+    cout << "  p(99,99) Expected row≈0 col≈0\n";
+    cout << "  p(99,99) Actual   row=" << p_bad.get_row()
+         << " col=" << p_bad.get_col() << "\n";
 
     // POSITION_NON_DEFAULT_CONSTRUCTOR_2 (char,char)
-    Position pos_p2('8','h');
-    Position pos_p3('1','a');
+    Position p2('8','h'); // -> (8,H) -> row=7 col=7
+    Position p3('1','a'); // -> (1,A) -> row=0 col=0
     cout << "POSITION_NON_DEFAULT_CONSTRUCTOR_2\n";
     cout << "  ('8','h') Expected row=7 col=7; write=(8,H)\n";
-    cout << "  ('8','h') Actual   row=" << pos_p2.get_row() << " col=" << pos_p2.get_col()
-         << "; write=" << pos_p2 << "\n";
+    cout << "  ('8','h') Actual   row=" << p2.get_row() << " col=" << p2.get_col()
+         << "; write=" << p2 << "\n";
     cout << "  ('1','a') Expected write=(1,A)\n";
-    cout << "  ('1','a') Actual   write=" << pos_p3 << "\n";
+    cout << "  ('1','a') Actual   write=" << p3 << "\n";
 
     // POSITION_READ
     Position pos_r;
@@ -175,17 +176,59 @@ void test_player() {
     ply_a.add_ship(Ship(Position(7,7), Position(7,3)));
     ply_a.add_ship(Ship(Position(5,5), Position(5,7)));
     int ply_before = ply_a.get_num_ships();
-    ply_a.add_ship(Ship(Position(0,7), Position(0,7))); // 第6艘，应该被忽略
+    ply_a.add_ship(Ship(Position(0,7), Position(0,7))); // should be ignored
     cout << "  Expected num stays=" << ply_before << "\n";
     cout << "  Actual   num=" << ply_a.get_num_ships() << "\n";
 
     // PLAYER_LOAD_GRID_FILE + PLAYER_ATTACK_1/2
-    Player A("A"), B("B");
-    bool ok1 = B.load_grid_file("grid1.txt");
-    bool ok2 = A.load_grid_file("grid2.txt");
-    cout << "PLAYER_LOAD_GRID_FILE\n";
-    cout << "  Expected true true; Actual " << (ok1 ? "true" : "false")
-         << " " << (ok2 ? "true" : "false") << "\n";
+    Player A("A"), B("B"), Dummy("X");
+    bool okB = B.load_grid_file("grid1.txt");              // good
+    bool okA = A.load_grid_file("grid2.txt");              // gppd
+    bool bad = Dummy.load_grid_file("no_such_file.txt");   // fail
+    cout << "PLAYER_LOAD_GRID_FILE  grid1=" << (okB ? "true" : "false")
+         << " grid2=" << (okA ? "true" : "false")
+         << " bad="   << (bad ? "true" : "false") << "\n";
+
+    // attack:hit miss repeat his
+    // hit in B's grid
+    int hit_r = -1, hit_c = -1;
+    for (int r = 0; r < MAX_GRID_SIZE && hit_r == -1; ++r) {
+        for (int c = 0; c < MAX_GRID_SIZE; ++c) {
+            if (B.get_grid_at(r, c) == SHIP_LETTER) {
+                hit_r = r; hit_c = c; break;
+            }
+        }
+    }
+    // miss
+    int miss_r = -1, miss_c = -1;
+    for (int r = 0; r < MAX_GRID_SIZE && miss_r == -1; ++r) {
+        for (int c = 0; c < MAX_GRID_SIZE; ++c) {
+            if (B.get_grid_at(r, c) == EMPTY_LETTER && !(r == hit_r && c == hit_c)) {
+                miss_r = r; miss_c = c; break;
+            }
+        }
+    }
+
+    // hit
+    if (hit_r != -1) {
+        cout << "PLAYER_ATTACK_1 (hit) at (" << (hit_r + 1) << "," << char('A' + hit_c) << ")\n";
+        A.attack(B, Position(hit_r, hit_c));
+        // repeat hit
+        cout << "PLAYER_ATTACK_2 (repeat same cell)\n";
+        A.attack(B, Position(hit_r, hit_c));
+    }
+    else {
+        cout << "WARNING: no SHIP cell found on grid1.txt\n";
+    }
+
+    // miss
+    if (miss_r != -1) {
+        cout << "PLAYER_ATTACK_2 (miss) at (" << (miss_r + 1) << "," << char('A' + miss_c) << ")\n";
+        A.attack(B, Position(miss_r, miss_c));
+    }
+    else {
+        cout << "WARNING: no EMPTY cell found on grid1.txt\n";
+    }
 
     ostringstream cap;
     std::streambuf* old_buf = cout.rdbuf();
@@ -205,7 +248,7 @@ void test_player() {
     cap.str(""); cap.clear();
 
     cout.rdbuf(cap.rdbuf());
-    A.attack(B, Position(0,7));            // 多半为空 -> miss
+    A.attack(B, Position(0,7));            // miss
     cout.rdbuf(old_buf);
     cout << "PLAYER_ATTACK_2 (miss at (1,H))\n";
     cout << "  Captured: " << cap.str();
@@ -230,4 +273,25 @@ void test_project_setup() {
     }
 
     return;
+}
+
+void test_game() {
+    cout << "==== GAME TESTS ====\n";
+    
+    Player p1("Alice"), p2("Bob");
+    Game g(p1, "grid1.txt", p2, "grid2.txt");
+    
+    cout << "GAME_NON_DEFAULT_CONSTRUCTOR  p1=" << g.get_p1().get_name()
+    << " p2=" << g.get_p2().get_name() << "\n";
+    cout << "GAME_GETTERS  " << g.get_p1().get_name()
+    << " " << g.get_p2().get_name() << "\n";
+    
+    Game gd; // check move
+    cout << "GAME_CHECK_VALID_MOVE\n";
+    cout << "  '1A'  -> " << (gd.check_valid_move("1A")  ? 1 : 0) << "\n";
+    cout << "  '8h'  -> " << (gd.check_valid_move("8h")  ? 1 : 0) << "\n";
+    cout << "  '10A' -> " << (gd.check_valid_move("10A") ? 1 : 0) << "\n";
+    cout << "  '9A'  -> " << (gd.check_valid_move("9A")  ? 1 : 0) << "\n";
+    cout << "  '1I'  -> " << (gd.check_valid_move("1I")  ? 1 : 0) << "\n";
+    cout << "  'A1'  -> " << (gd.check_valid_move("A1")  ? 1 : 0) << "\n";
 }
